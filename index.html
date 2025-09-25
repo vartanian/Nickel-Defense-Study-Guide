@@ -80,9 +80,40 @@
                 height: 400px;
             }
         }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4A6C6F;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4A6C6F;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .message-box.visible {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="antialiased">
+
+    <div id="message-box" class="message-box hidden"></div>
 
     <header class="bg-[#FDF8F0]/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-200">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -92,6 +123,7 @@
                 <a href="#nickelback" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">The Nickel Back</a>
                 <a href="#drills" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Drills</a>
                 <a href="#history" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">History</a>
+                <a href="#ai-film-room" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">AI Film Room</a>
             </div>
             <div class="md:hidden flex items-center">
                 <button id="mobile-menu-btn" class="text-gray-600 focus:outline-none">
@@ -104,6 +136,7 @@
             <a href="#nickelback" class="block py-2 px-6 text-gray-700 hover:bg-gray-200">The Nickel Back</a>
             <a href="#drills" class="block py-2 px-6 text-gray-700 hover:bg-gray-200">Drills</a>
             <a href="#history" class="block py-2 px-6 text-gray-700 hover:bg-gray-200">History</a>
+            <a href="#ai-film-room" class="block py-2 px-6 text-gray-700 hover:bg-gray-200">AI Film Room</a>
         </div>
     </header>
 
@@ -236,6 +269,62 @@
                 </div>
             </div>
         </section>
+
+        <section id="ai-film-room" class="mb-12">
+            <h2 class="text-3xl font-bold text-center mb-12">AI Film Room ✨</h2>
+            <p class="text-center max-w-3xl mx-auto text-lg mb-12">This is your new secret weapon. Use the AI Playbook Assistant to get tactical advice or the Drill Generator to create custom practice plans. Think of it as having an offensive coordinator on your side of the ball, but for defense.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- AI Playbook Assistant -->
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">AI Playbook Assistant ✨</h3>
+                    <p class="mb-4 text-gray-600">Ask a question about the Nickel defense and get an expert's take. <br>Example: "How do we adjust to a motion receiver from the slot?"</p>
+                    <textarea id="playbook-input" class="w-full h-24 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A6C6F] resize-none" placeholder="Enter your tactical question here..."></textarea>
+                    <button id="playbook-btn" class="mt-4 w-full bg-[#4A6C6F] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#3E5A5C] transition-colors flex items-center justify-center">
+                        <span id="playbook-btn-text">Get Tactical Advice</span>
+                        <div id="playbook-spinner" class="loading-spinner hidden"></div>
+                    </button>
+                    <div id="playbook-response" class="mt-6 p-4 rounded-lg bg-gray-100 text-gray-800 hidden"></div>
+                </div>
+                
+                <!-- Drill Generator -->
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">Drill Generator ✨</h3>
+                    <p class="mb-4 text-gray-600">Tell the AI what skill you want to practice and it will generate a drill for you. <br>Example: "I want a drill to improve my tackling in the open field."</p>
+                    <textarea id="drill-input" class="w-full h-24 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A6C6F] resize-none" placeholder="Describe the drill you want to create..."></textarea>
+                    <button id="drill-btn" class="mt-4 w-full bg-[#4A6C6F] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#3E5A5C] transition-colors flex items-center justify-center">
+                        <span id="drill-btn-text">Generate Drill</span>
+                        <div id="drill-spinner" class="loading-spinner hidden"></div>
+                    </button>
+                    <div id="drill-response" class="mt-6 p-4 rounded-lg bg-gray-100 text-gray-800 hidden"></div>
+                </div>
+
+                <!-- AI Scout Report -->
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">AI Scout Report ✨</h3>
+                    <p class="mb-4 text-gray-600">Enter a description of the opposing offense to get a tactical scout report. <br>Example: "They have a fast-paced, spread offense that loves to run quick slants."</p>
+                    <textarea id="scout-input" class="w-full h-24 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A6C6F] resize-none" placeholder="Enter opponent details here..."></textarea>
+                    <button id="scout-btn" class="mt-4 w-full bg-[#4A6C6F] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#3E5A5C] transition-colors flex items-center justify-center">
+                        <span id="scout-btn-text">Generate Scout Report</span>
+                        <div id="scout-spinner" class="loading-spinner hidden"></div>
+                    </button>
+                    <div id="scout-response" class="mt-6 p-4 rounded-lg bg-gray-100 text-gray-800 hidden"></div>
+                </div>
+
+                <!-- Audio Coach -->
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4">Audio Coach ✨</h3>
+                    <p class="mb-4 text-gray-600">Type a coaching point to hear it spoken by the AI in a coach's voice. <br>Example: "Keep your head on a swivel. Don't take your eyes off the ball."</p>
+                    <textarea id="tts-input" class="w-full h-24 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A6C6F] resize-none" placeholder="Enter your coaching point here..."></textarea>
+                    <button id="tts-btn" class="mt-4 w-full bg-[#4A6C6F] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#3E5A5C] transition-colors flex items-center justify-center">
+                        <span id="tts-btn-text">Play Coaching Point</span>
+                        <div id="tts-spinner" class="loading-spinner hidden"></div>
+                    </button>
+                    <audio id="tts-audio" class="mt-4 w-full hidden" controls></audio>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="bg-gray-800 text-white py-8">
@@ -412,6 +501,303 @@
                             }
                         }
                     }
+                }
+            });
+
+            const playbookInput = document.getElementById('playbook-input');
+            const playbookBtn = document.getElementById('playbook-btn');
+            const playbookBtnText = document.getElementById('playbook-btn-text');
+            const playbookSpinner = document.getElementById('playbook-spinner');
+            const playbookResponse = document.getElementById('playbook-response');
+            
+            const drillInput = document.getElementById('drill-input');
+            const drillBtn = document.getElementById('drill-btn');
+            const drillBtnText = document.getElementById('drill-btn-text');
+            const drillSpinner = document.getElementById('drill-spinner');
+            const drillResponse = document.getElementById('drill-response');
+
+            const scoutInput = document.getElementById('scout-input');
+            const scoutBtn = document.getElementById('scout-btn');
+            const scoutBtnText = document.getElementById('scout-btn-text');
+            const scoutSpinner = document.getElementById('scout-spinner');
+            const scoutResponse = document.getElementById('scout-response');
+
+            const ttsInput = document.getElementById('tts-input');
+            const ttsBtn = document.getElementById('tts-btn');
+            const ttsBtnText = document.getElementById('tts-btn-text');
+            const ttsSpinner = document.getElementById('tts-spinner');
+            const ttsAudio = document.getElementById('tts-audio');
+
+            const messageBox = document.getElementById('message-box');
+
+            function showMessage(message, duration = 3000) {
+                messageBox.textContent = message;
+                messageBox.classList.remove('hidden');
+                messageBox.classList.add('visible');
+                setTimeout(() => {
+                    messageBox.classList.remove('visible');
+                    setTimeout(() => {
+                        messageBox.classList.add('hidden');
+                    }, 500);
+                }, duration);
+            }
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const ttsApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            // A generic async function to handle API calls with exponential backoff
+            async function fetchWithExponentialBackoff(payload, apiUrl, retries = 5) {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.status === 429) {
+                            if (i < retries - 1) {
+                                const delay = Math.pow(2, i) * 1000;
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                continue;
+                            }
+                        }
+                        return response;
+                    } catch (error) {
+                        if (i < retries - 1) {
+                            const delay = Math.pow(2, i) * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            continue;
+                        }
+                        throw error;
+                    }
+                }
+                throw new Error('Max retries exceeded.');
+            }
+
+            // A reusable function to handle the entire API request workflow for the buttons
+            async function handleApiRequest(inputEl, buttonEl, buttonTextEl, spinnerEl, responseEl, callback) {
+                const prompt = inputEl.value.trim();
+                if (!prompt) return;
+
+                buttonEl.disabled = true;
+                buttonTextEl.classList.add('hidden');
+                spinnerEl.classList.remove('hidden');
+                responseEl.classList.add('hidden');
+
+                try {
+                    await callback(prompt);
+                } catch (error) {
+                    console.error('API request failed:', error);
+                    responseEl.innerHTML = "Sorry, coach. I couldn't get a response. Something's not working right in the film room. Try again later.";
+                    responseEl.classList.remove('hidden');
+                } finally {
+                    buttonEl.disabled = false;
+                    buttonTextEl.classList.remove('hidden');
+                    spinnerEl.classList.add('hidden');
+                }
+            }
+
+            // Function for processing standard text responses
+            function processTextResponse(result, responseEl) {
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "Couldn't generate a response. Please try again.";
+                responseEl.innerHTML = text.replace(/\n/g, '<br>');
+                responseEl.classList.remove('hidden');
+            }
+
+            // Function for processing structured JSON responses
+            function processStructuredResponse(result, responseEl) {
+                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!jsonText) {
+                    throw new Error("Invalid JSON response received.");
+                }
+                const drill = JSON.parse(jsonText);
+
+                let html = `<h4 class="font-bold text-[#4A6C6F] mb-2">${drill.drillName}</h4>`;
+                html += `<p class="mb-4 text-gray-700"><strong>Purpose:</strong> ${drill.purpose}</p>`;
+                html += `<h5 class="font-bold mb-2">Steps:</h5>`;
+                html += `<ol class="list-decimal list-inside space-y-2">`;
+                drill.steps.forEach(step => {
+                    html += `<li>${step}</li>`;
+                });
+                html += `</ol>`;
+
+                responseEl.innerHTML = html;
+                responseEl.classList.remove('hidden');
+            }
+
+            // Event listener for AI Playbook Assistant
+            playbookBtn.addEventListener('click', () => {
+                handleApiRequest(playbookInput, playbookBtn, playbookBtnText, playbookSpinner, playbookResponse, async (prompt) => {
+                    const systemPrompt = "You are a highly experienced football coach specializing in the Nickel defense. Your responses should be tactical, professional, and confident, as if you're talking to a player in the film room. Use terms like 'listen up,' 'on the field,' and 'make a play' to maintain the persona. Keep responses concise and to the point, focused on clear instruction.";
+                    const userQuery = `As a coach, answer this question about the Nickel defense: "${prompt}"`;
+                    const payload = {
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                    };
+                    const response = await fetchWithExponentialBackoff(payload, apiUrl);
+                    const result = await response.json();
+                    processTextResponse(result, playbookResponse);
+                });
+            });
+
+            // Event listener for Drill Generator
+            drillBtn.addEventListener('click', () => {
+                handleApiRequest(drillInput, drillBtn, drillBtnText, drillSpinner, drillResponse, async (prompt) => {
+                    const userQuery = `Generate a football drill that helps a Nickel Back improve on the following: "${prompt}". The response should be a JSON object with the following structure: { "drillName": "string", "purpose": "string", "steps": ["string", "string", "string"] }. Make sure the steps are a concise, ordered list of instructions.`;
+                    const systemPrompt = "You are a football coach's assistant generating drills. The drills should be highly specific and instructional.";
+                    const payload = {
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    "drillName": { "type": "STRING" },
+                                    "purpose": { "type": "STRING" },
+                                    "steps": { "type": "ARRAY", "items": { "type": "STRING" } }
+                                }
+                            }
+                        },
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                    };
+                    const response = await fetchWithExponentialBackoff(payload, apiUrl);
+                    const result = await response.json();
+                    processStructuredResponse(result, drillResponse);
+                });
+            });
+
+            // Event listener for AI Scout Report
+            scoutBtn.addEventListener('click', () => {
+                handleApiRequest(scoutInput, scoutBtn, scoutBtnText, scoutSpinner, scoutResponse, async (prompt) => {
+                    const systemPrompt = "You are an elite football scout providing a tactical report. Your responses should be analytical, professional, and focus on scheme-specific recommendations for a Nickel defense. Use phrases like 'tendencies indicate' and 'recommendations for the Nickel defense' to maintain the persona. The report should be structured with clear sections for tendencies, key players, and recommendations.";
+                    const userQuery = `Generate a scout report for an opposing offense with the following characteristics: "${prompt}".`;
+                    const payload = {
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                    };
+                    const response = await fetchWithExponentialBackoff(payload, apiUrl);
+                    const result = await response.json();
+                    processTextResponse(result, scoutResponse);
+                });
+            });
+
+            // Helper function to convert base64 to ArrayBuffer
+            function base64ToArrayBuffer(base64) {
+                const binaryString = window.atob(base64);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            // Helper function to convert PCM audio to WAV format
+            function pcmToWav(pcmData, sampleRate) {
+                const buffer = new ArrayBuffer(44 + pcmData.byteLength);
+                const view = new DataView(buffer);
+
+                // RIFF identifier
+                writeString(view, 0, 'RIFF');
+                // file size
+                view.setUint32(4, 36 + pcmData.byteLength, true);
+                // RIFF type
+                writeString(view, 8, 'WAVE');
+                // format chunk identifier
+                writeString(view, 12, 'fmt ');
+                // format chunk length
+                view.setUint32(16, 16, true);
+                // sample format (1 = PCM)
+                view.setUint16(20, 1, true);
+                // channel count
+                view.setUint16(22, 1, true);
+                // sample rate
+                view.setUint32(24, sampleRate, true);
+                // byte rate (sample rate * block align)
+                view.setUint32(28, sampleRate * 2, true);
+                // block align (channel count * bytes per sample)
+                view.setUint16(32, 2, true);
+                // bits per sample
+                view.setUint16(34, 16, true);
+                // data chunk identifier
+                writeString(view, 36, 'data');
+                // data chunk length
+                view.setUint32(40, pcmData.byteLength, true);
+
+                // write the PCM samples
+                let offset = 44;
+                for (let i = 0; i < pcmData.length; i++, offset += 2) {
+                    view.setInt16(offset, pcmData[i], true);
+                }
+
+                return new Blob([view], { type: 'audio/wav' });
+            }
+
+            function writeString(view, offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
+
+            ttsBtn.addEventListener('click', async () => {
+                const text = ttsInput.value.trim();
+                if (!text) {
+                    showMessage("First, type a coaching point into the box.");
+                    return;
+                }
+
+                ttsBtn.disabled = true;
+                ttsBtnText.classList.add('hidden');
+                ttsSpinner.classList.remove('hidden');
+                ttsAudio.classList.add('hidden');
+                
+                const payload = {
+                    contents: [{ parts: [{ text: text }] }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: "Kore" }
+                            }
+                        }
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
+                };
+
+                try {
+                    showMessage("Processing audio... one moment.");
+                    const response = await fetchWithExponentialBackoff(payload, ttsApiUrl);
+                    const result = await response.json();
+                    
+                    const part = result?.candidates?.[0]?.content?.parts?.[0];
+                    const audioData = part?.inlineData?.data;
+                    const mimeType = part?.inlineData?.mimeType;
+
+                    if (audioData && mimeType && mimeType.startsWith("audio/L16")) {
+                        const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                        const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 16000;
+                        
+                        const pcmData = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmData);
+                        const wavBlob = pcmToWav(pcm16, sampleRate);
+                        const audioUrl = URL.createObjectURL(wavBlob);
+
+                        ttsAudio.src = audioUrl;
+                        ttsAudio.classList.remove('hidden');
+                        ttsAudio.play();
+                        showMessage("Audio ready! You can play it below.");
+                    } else {
+                        showMessage("Could not generate audio. Please try again.");
+                        console.error("Invalid audio response:", result);
+                    }
+                } catch (error) {
+                    console.error('Error fetching TTS audio:', error);
+                    showMessage("Error generating audio. Check the console for details.");
+                } finally {
+                    ttsBtn.disabled = false;
+                    ttsBtnText.classList.remove('hidden');
+                    ttsSpinner.classList.add('hidden');
                 }
             });
         });
